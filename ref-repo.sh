@@ -85,7 +85,7 @@ expiration_cutoff() {
 }
 
 cleanup_expired() {
-  local cutoff candidate base timestamp remainder
+  local cutoff candidate base timestamp remainder last_used
   cutoff="$(expiration_cutoff)"
 
   for candidate in "$CACHE_ROOT"/*; do
@@ -98,7 +98,13 @@ cleanup_expired() {
     remainder="${base:16}"
     [[ "$remainder" =~ ^[A-Za-z0-9._-]+-([0-9a-f]{40}|[0-9a-f]{64})$ ]] ||
       continue
-    if [[ "$timestamp" < "$cutoff" ]]; then
+    last_used="$timestamp"
+    if [[ -f "$candidate/.git/ref-repo-last-used" ]]; then
+      IFS= read -r last_used < "$candidate/.git/ref-repo-last-used" ||
+        last_used="$timestamp"
+      [[ "$last_used" =~ ^[0-9]{8}-[0-9]{6}$ ]] || last_used="$timestamp"
+    fi
+    if [[ "$last_used" < "$cutoff" ]]; then
       rm -rf -- "$candidate"
     fi
   done
@@ -210,23 +216,13 @@ find_immutable_ref_cache() {
 }
 
 refresh_cache_timestamp() {
-  local cache hash timestamp destination
+  local cache hash timestamp
   cache="$1"
   hash="$(normalize_hash "$2")"
   timestamp="$(current_timestamp)"
-  destination="$CACHE_ROOT/$timestamp-$REPO_NAME-$hash"
-
-  if [[ "$cache" != "$destination" ]]; then
-    if [[ -e "$destination" ]]; then
-      cache_has_hash "$destination" "$hash" ||
-        die "timestamp destination exists but is not the expected cache: $destination"
-      merge_metadata "$cache" "$destination"
-      rm -rf -- "$cache"
-    else
-      mv -- "$cache" "$destination"
-    fi
-    cache="$destination"
-  fi
+  cache_has_hash "$cache" "$hash" ||
+    die "cannot refresh an invalid cache: $cache"
+  printf '%s\n' "$timestamp" > "$cache/.git/ref-repo-last-used"
 
   cleanup_expired
   printf '%s' "$cache"
@@ -245,12 +241,58 @@ resolve_abbreviated_hash() {
 }
 
 TEMP_DIR=''
+CACHE_LOCK_DIR=''
+CACHE_LOCK_HELD=false
+
 cleanup_temporary() {
   if [[ -n "$TEMP_DIR" && -d "$TEMP_DIR" ]]; then
     rm -rf -- "$TEMP_DIR"
   fi
 }
-trap cleanup_temporary EXIT HUP INT TERM
+
+release_cache_lock() {
+  local owner_pid
+  [[ "$CACHE_LOCK_HELD" == true ]] || return 0
+  owner_pid=''
+  if [[ -f "$CACHE_LOCK_DIR/pid" ]]; then
+    IFS= read -r owner_pid < "$CACHE_LOCK_DIR/pid" || true
+  fi
+  if [[ "$owner_pid" == "$$" ]]; then
+    rm -rf -- "$CACHE_LOCK_DIR"
+  fi
+  CACHE_LOCK_HELD=false
+}
+
+acquire_cache_lock() {
+  local attempts owner_pid stale_lock
+  attempts=0
+  while ! mkdir "$CACHE_LOCK_DIR" 2>/dev/null; do
+    owner_pid=''
+    if [[ -f "$CACHE_LOCK_DIR/pid" ]]; then
+      IFS= read -r owner_pid < "$CACHE_LOCK_DIR/pid" || true
+    fi
+    if [[ "$owner_pid" =~ ^[0-9]+$ ]] &&
+      ! kill -0 "$owner_pid" 2>/dev/null; then
+      stale_lock="$CACHE_LOCK_DIR.stale.$$.$attempts"
+      if mv -- "$CACHE_LOCK_DIR" "$stale_lock" 2>/dev/null; then
+        rm -rf -- "$stale_lock"
+        continue
+      fi
+    fi
+    attempts=$((attempts + 1))
+    [[ "$attempts" -lt 600 ]] ||
+      die 'timed out waiting for the reference cache lock'
+    sleep 0.05
+  done
+  CACHE_LOCK_HELD=true
+  printf '%s\n' "$$" > "$CACHE_LOCK_DIR/pid"
+}
+
+cleanup_all() {
+  cleanup_temporary
+  release_cache_lock
+}
+trap cleanup_all EXIT HUP INT TERM
 
 materialize_ref() {
   local fetch_ref
@@ -308,6 +350,7 @@ esac
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 CACHE_ROOT="$SCRIPT_DIR/ref-repos"
 mkdir -p "$CACHE_ROOT"
+CACHE_LOCK_DIR="$CACHE_ROOT/.ref-repo.lock"
 REPO_NAME="$(repository_name "$REPO_URL")"
 
 EFFECTIVE_IMMUTABLE="$IMMUTABLE"
@@ -316,6 +359,8 @@ if is_full_hash "$REQUESTED_REF"; then
 fi
 
 CACHE=''
+acquire_cache_lock
+cleanup_expired
 if [[ "$EFFECTIVE_IMMUTABLE" == true ]]; then
   if is_full_hash "$REQUESTED_REF"; then
     CACHE="$(find_hash_cache "$REQUESTED_REF")"
@@ -327,19 +372,21 @@ if [[ "$EFFECTIVE_IMMUTABLE" == true ]]; then
     CACHE="$(refresh_cache_timestamp "$CACHE" "$RESOLVED_HASH")"
     record_metadata "$CACHE" true "$REPO_URL" "$REQUESTED_REF" "$RESOLVED_HASH"
     printf '%s\n' "$CACHE"
+    release_cache_lock
     exit 0
   fi
 fi
+release_cache_lock
 
-cleanup_expired
 materialize_ref
 
+acquire_cache_lock
 EXISTING_CACHE="$(find_hash_cache "$RESOLVED_HASH")"
 if [[ -n "$EXISTING_CACHE" ]]; then
   merge_metadata "$TEMP_DIR" "$EXISTING_CACHE"
   rm -rf -- "$TEMP_DIR"
   TEMP_DIR=''
-  CACHE="$(refresh_cache_timestamp "$EXISTING_CACHE" "$RESOLVED_HASH")"
+  CACHE="$EXISTING_CACHE"
 else
   DESTINATION="$CACHE_ROOT/$(current_timestamp)-$REPO_NAME-$RESOLVED_HASH"
   if [[ -e "$DESTINATION" ]]; then
@@ -352,9 +399,10 @@ else
   fi
   TEMP_DIR=''
   CACHE="$DESTINATION"
-  cleanup_expired
 fi
 
+CACHE="$(refresh_cache_timestamp "$CACHE" "$RESOLVED_HASH")"
 record_metadata "$CACHE" "$EFFECTIVE_IMMUTABLE" "$REPO_URL" \
   "$REQUESTED_REF" "$RESOLVED_HASH"
 printf '%s\n' "$CACHE"
+release_cache_lock
