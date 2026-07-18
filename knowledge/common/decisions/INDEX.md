@@ -1,0 +1,4 @@
+# Common Decisions
+
+| Document | Summary |
+| --- | --- |

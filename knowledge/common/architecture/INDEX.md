@@ -1,0 +1,4 @@
+# Common Architecture
+
+| Document | Summary |
+| --- | --- |
