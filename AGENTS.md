@@ -14,15 +14,29 @@ delivery for that task:
 2. Determine the member and affected project names.
 3. Read relevant worklogs and knowledge before starting project work.
 4. Perform the actual project work.
-5. Return to this repository and run `git pull --no-rebase` again.
-6. Write one worklog for every affected project and update all affected worklog
+5. Determine whether the task requires a worklog under the rules below.
+6. When a worklog is required, return to this repository and run
+   `git pull --no-rebase` again.
+7. Write one worklog for every affected project and update all affected worklog
    indexes.
-7. Commit the repository-management changes and push them. If the push is
+8. Commit the repository-management changes and push them. If the push is
    rejected because the remote advanced, run `git pull --no-rebase`, resolve
    the merge, and push again.
 
-Do not skip a worklog because a task was read-only, failed, became blocked, or
-produced no project changes.
+Steps 6 through 8 are conditional when no worklog or other repository-management
+change is required.
+
+Write a worklog when the user explicitly requests one or when the task makes a
+substantive modification. A substantive modification changes project files,
+configuration, data, a deployed or external system, or knowledge content. Pure
+questions, research, inspection, or diagnosis without such a modification do
+not require a worklog.
+
+Creating, editing, reorganizing, or deleting knowledge is always a substantive
+modification and always requires a worklog. If a task makes a substantive
+modification before it fails or becomes blocked, record the work that was
+performed. Do not create a worklog solely because a task was read-only, failed,
+became blocked, or produced no project changes.
 
 Do not create, edit, reorganize, or delete knowledge content unless the user
 explicitly requests knowledge organization. For such a request, follow

@@ -3,8 +3,10 @@
 ## Trigger
 
 Use this file only when the user explicitly requests knowledge organization,
-creation, consolidation, correction, or deletion. A normal task and its
-mandatory worklog do not authorize a knowledge change.
+creation, consolidation, correction, or deletion. A normal task or its worklog
+does not authorize a knowledge change. Every knowledge modification is a
+substantive modification and requires a worklog, even when the rest of the task
+is limited to questions, research, inspection, or diagnosis.
 
 ## Scope and Topic Selection
 
@@ -172,7 +174,7 @@ repositories and link supporting knowledge and worklogs whenever possible.
    only for a distinct durable subject.
 5. Keep conclusions source-aligned and separate verified facts from caveats.
 6. Update the topic, scope, and root indexes affected by the change.
-7. Link the mandatory worklog for the knowledge-update task.
+7. Link the required worklog for the knowledge-update task.
 8. Verify relative links, full commit hashes, immutable flags, UTC+8 timestamps,
    and English content.
 

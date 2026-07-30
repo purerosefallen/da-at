@@ -3,7 +3,9 @@
 This repository is the shared, versioned record of team work and reusable
 technical knowledge.
 
-- `worklogs/` contains a mandatory record for every task.
+- `worklogs/` records tasks that make substantive modifications or for which
+  the user explicitly requests logging. Knowledge changes always require a
+  worklog.
 - `knowledge/` contains curated knowledge only when a user explicitly requests
   knowledge organization.
 - `ref-repo.sh` creates short-lived, shallow reference checkouts under the
