@@ -119,6 +119,36 @@ Every topic `INDEX.md` must use:
 Sort documents lexicographically by filename. Keep the table header when the
 topic has no documents.
 
+### Designated Operation Entry Points
+
+Add an operation entry point only when the user explicitly designates a
+knowledge document as the entry for a named operation. Do not infer entry-point
+status merely because a document is under `operations/` or describes a
+repeatable procedure.
+
+Expose each designated entry point in both of these places:
+
+1. In the scope `INDEX.md`, place this callout immediately after the title and
+   before the topic table:
+
+   ```markdown
+   > **Operation entry point — <imperative action>:** [Open the procedure](<topic>/<document>.md).
+   ```
+
+2. In the owning topic `INDEX.md`, use the same `<imperative action>` as the
+   document link label and begin its summary with `Primary entry point for`.
+
+Write `<imperative action>` as a concise English verb phrase that reflects the
+user's intended operation, such as `Operate DNS records`. Keep the underlying
+knowledge filename and document title stable; an entry label is navigation,
+not a reason to rename the document. When a scope has multiple explicitly
+designated entries, add one callout per entry and sort the callouts
+lexicographically by action label. Remove or update both index representations
+when the user withdraws or changes the designation.
+
+Keep `knowledge/INDEX.md` as the structural scope directory. Do not add
+operation-level entry points there.
+
 ## Knowledge Document Contract
 
 Every knowledge document must use every heading below. Use `None` when a
