@@ -5,8 +5,10 @@
 Use this file when the user explicitly requests knowledge organization,
 creation, consolidation, correction, or deletion, or when
 [Reuse-driven migration](#reuse-driven-migration) applies while using existing
-knowledge. A normal task or its worklog alone does not authorize another
-knowledge change. Every knowledge modification, including tool migration, is a
+knowledge. The only standing migration exception requires all three conditions:
+the current task references that knowledge, it has no corresponding tool project,
+and its logic has reusable value. A normal task or its worklog alone does not
+authorize another knowledge change. Every modification, including migration, is a
 substantive modification and requires a worklog.
 
 ## Scope and Topic Selection
@@ -313,11 +315,15 @@ primary engineering form.
 
 ## Reuse-Driven Migration
 
-When existing knowledge is used to perform a task, migrate its repeatable logic
-if it can reasonably become a reusable tool and has no existing engineered
-project. This narrow migration is authorized by the repository workflow without
-an additional knowledge-organization request. Explicit user scope, including a
-read-only restriction, takes precedence.
+Do not silently migrate knowledge except when all three conditions hold:
+
+- The current task references the knowledge document.
+- That knowledge has no corresponding tool project.
+- Its logic has reusable value and can reasonably be migrated into a tool.
+
+This is the single standing migration exception; it does not authorize other
+knowledge edits. Follow it without an additional organization request. Explicit
+user scope, including a read-only restriction, takes precedence.
 
 1. Read the owning knowledge, indexes, source evidence, and relevant worklogs.
 2. Confirm that the procedure is not already implemented as an engineered

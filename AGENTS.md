@@ -38,9 +38,16 @@ modification before it fails or becomes blocked, record the work that was
 performed. Do not create a worklog solely because a task was read-only, failed,
 became blocked, or produced no project changes.
 
-Create, edit, reorganize, or delete knowledge only when the user explicitly
-requests it or when the narrowly authorized reuse-driven migration below
-applies. Follow [UPDATE_KNOWLEDGE.md](UPDATE_KNOWLEDGE.md) in either case.
+Do not create, edit, reorganize, or delete knowledge content unless the user
+explicitly requests knowledge organization. The only standing exception is
+reuse-driven migration when all three conditions below hold:
+
+- The knowledge document is referenced for the current task.
+- That knowledge has no corresponding tool project.
+- Its logic has reusable value and can reasonably be migrated into a tool.
+
+Follow [UPDATE_KNOWLEDGE.md](UPDATE_KNOWLEDGE.md) for an explicit request or this
+single bounded exception.
 
 ## Fixed File Contracts
 
@@ -263,9 +270,8 @@ branch with `ref-repo.sh` before relying on it.
 
 ### Reuse-Driven Engineering Migration
 
-When using existing knowledge to perform a task, check whether its repeatable
-logic can reasonably become a reusable tool. If it is not already an engineered
-project, migrate that logic using
+Only when the current task references a knowledge document, that knowledge has
+no corresponding tool project, and its logic has reusable value, migrate it using
 [Reuse-driven migration](UPDATE_KNOWLEDGE.md#reuse-driven-migration). This is a
 standing authorization for that bounded knowledge update and its required
 worklog; a task explicitly restricted to read-only work takes precedence.
