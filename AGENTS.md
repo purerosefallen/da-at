@@ -39,15 +39,21 @@ performed. Do not create a worklog solely because a task was read-only, failed,
 became blocked, or produced no project changes.
 
 Do not create, edit, reorganize, or delete knowledge content unless the user
-explicitly requests knowledge organization. The only standing exception is
-reuse-driven migration when all three conditions below hold:
+explicitly requests knowledge organization. The only standing exception permits
+editing an existing knowledge document for reuse-driven migration when all
+three conditions below hold:
 
 - The knowledge document is referenced for the current task.
 - That knowledge has no corresponding tool project.
 - Its logic has reusable value and can reasonably be migrated into a tool.
 
+This exception permits only editing the referenced existing knowledge and
+adding its corresponding tool files and required index entries. Creating new
+knowledge documents, reorganizing knowledge, and deleting knowledge still
+require an explicit user request in every case.
+
 Follow [UPDATE_KNOWLEDGE.md](UPDATE_KNOWLEDGE.md) for an explicit request or this
-single bounded exception.
+single bounded edit exception.
 
 ## Fixed File Contracts
 

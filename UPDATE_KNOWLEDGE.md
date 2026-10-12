@@ -5,10 +5,13 @@
 Use this file when the user explicitly requests knowledge organization,
 creation, consolidation, correction, or deletion, or when
 [Reuse-driven migration](#reuse-driven-migration) applies while using existing
-knowledge. The only standing migration exception requires all three conditions:
+knowledge. The only standing exception permits editing an existing knowledge
+document for migration and requires all three conditions:
 the current task references that knowledge, it has no corresponding tool project,
 and its logic has reusable value. A normal task or its worklog alone does not
-authorize another knowledge change. Every modification, including migration, is a
+authorize another knowledge change. Creating knowledge documents, reorganizing
+knowledge, and deleting knowledge always require an explicit user request;
+the exception does not authorize them. Every modification, including migration, is a
 substantive modification and requires a worklog.
 
 ## Scope and Topic Selection
@@ -315,15 +318,20 @@ primary engineering form.
 
 ## Reuse-Driven Migration
 
-Do not silently migrate knowledge except when all three conditions hold:
+Do not silently edit knowledge for migration except when all three conditions
+hold:
 
 - The current task references the knowledge document.
 - That knowledge has no corresponding tool project.
 - Its logic has reusable value and can reasonably be migrated into a tool.
 
-This is the single standing migration exception; it does not authorize other
-knowledge edits. Follow it without an additional organization request. Explicit
-user scope, including a read-only restriction, takes precedence.
+This is the single standing edit exception. It permits editing the referenced
+existing knowledge document and adding its corresponding executable project and
+required index entries. It does not authorize creating knowledge documents,
+reorganizing knowledge, deleting knowledge, or unrelated edits. Those actions
+always require an explicit user request. Follow this bounded edit exception
+without an additional organization request. Explicit user scope, including a
+read-only restriction, takes precedence.
 
 1. Read the owning knowledge, indexes, source evidence, and relevant worklogs.
 2. Confirm that the procedure is not already implemented as an engineered
