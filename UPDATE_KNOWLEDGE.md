@@ -267,7 +267,9 @@ Choose exactly one primary form for each new tool:
 
 Include the source, `requirements.txt`, `README.md`, and `.gitignore`. List all
 third-party dependencies; keep `requirements.txt` even for a standard-library
-tool and state that no dependencies are required. Prefer a project-local venv
+tool and state when no runtime dependencies are required. Include a `tests/`
+suite using **pytest**, declare pytest in `requirements-dev.txt`, and document
+installing both requirements files and running `python -m pytest`. Prefer a project-local venv
 for every invocation and document creation, dependency installation, and
 execution through that environment. Ignore `.venv/`, other documented virtual
 environment directories, `__pycache__/`, `*.py[cod]`, and applicable test caches.
@@ -276,8 +278,10 @@ environment directories, `__pycache__/`, `*.py[cod]`, and applicable test caches
 
 Provide a complete npm project: `package.json`, committed `package-lock.json`,
 source files, documented npm run scripts, `README.md`, and `.gitignore`. Declare
-the supported Node.js version and all dependencies. Document `npm ci` and the
-run command, even when the tool has no third-party dependencies. Ignore
+the supported Node.js version and all dependencies. Include tests using **Jest**,
+declare Jest in `devDependencies`, and make `npm test` run that suite. Document
+`npm ci`, `npm test`, and the run command, even when the tool has no third-party
+runtime dependencies. Ignore
 `node_modules/`, npm debug logs, and applicable cache, coverage, and build output.
 
 ### Shell
@@ -310,7 +314,12 @@ local configuration and `.env` files, without excluding required manifests or
 lockfiles. Never persist credentials in source, documentation, logs, or runtime
 artifacts merely because those artifacts are ignored. Use runtime input and
 clean up temporary resources on success and failure. Provide validation suited
-to the operation, and record only checks actually performed.
+to the operation, and record only checks actually performed. For new Python and
+Node.js tools, pytest and Jest respectively are required parts of the project,
+not optional examples. Test meaningful behavior and failure boundaries with
+deterministic fixtures or mocks; additionally validate the real command or a
+safe integration path where the authorized task permits it. Do not claim a live
+operation was verified solely because its mocked test passed.
 
 If a required runtime or command is absent on the local machine, use Docker
 instead of installing it on the host. This fallback does not change the tool's
