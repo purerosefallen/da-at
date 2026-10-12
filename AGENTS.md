@@ -270,9 +270,13 @@ project, migrate that logic using
 standing authorization for that bounded knowledge update and its required
 worklog; a task explicitly restricted to read-only work takes precedence.
 
-Use an existing engineered project as it stands. Do not redesign, repackage,
-move, or refactor it merely to improve its engineering or to match a newer
-template. Do not expand the authorized operation while migrating its procedure.
+If a corresponding tool project already exists, do not silently migrate or
+rewrite its knowledge. Such a knowledge migration requires an explicit user
+request. Use the existing engineered project as it stands; do not redesign,
+repackage, move, or refactor it merely to improve its engineering or to match a
+newer template. Do not expand the authorized operation while migrating its
+procedure. An unrelated tool or an empty `tools/` directory does not trigger
+this restriction.
 
 ## Reference Repositories
 

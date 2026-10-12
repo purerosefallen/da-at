@@ -321,8 +321,11 @@ read-only restriction, takes precedence.
 
 1. Read the owning knowledge, indexes, source evidence, and relevant worklogs.
 2. Confirm that the procedure is not already implemented as an engineered
-   project. Leave existing projects in place; do not improve or migrate them
-   merely to satisfy this newer contract.
+   project. If a corresponding tool project exists, do not silently migrate or
+   rewrite the knowledge: that migration requires an explicit user request.
+   Leave existing projects in place; do not improve or migrate them merely to
+   satisfy this newer contract. Unrelated tools and empty `tools/` directories
+   do not block migration of a procedure with no corresponding tool project.
 3. Extract only the reusable logic, preserving its inputs, effects, checks, and
    operational limits. Choose one engineering form above and add its project.
 4. Replace duplicated implementation blocks with tool links and usable commands.
