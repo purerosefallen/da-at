@@ -6,8 +6,8 @@ technical knowledge.
 - `worklogs/` records tasks that make substantive modifications or for which
   the user explicitly requests logging. Knowledge changes always require a
   worklog.
-- `knowledge/` contains curated knowledge only when a user explicitly requests
-  knowledge organization.
+- `knowledge/` contains curated knowledge and scope-local `tools/` projects.
+  Updates require an explicit request or a bounded reuse-driven migration.
 - `ref-repo.sh` creates short-lived, shallow reference checkouts under the
   ignored `ref-repos/` cache.
 - `_example/` directories under dynamic worklog and project-knowledge roots

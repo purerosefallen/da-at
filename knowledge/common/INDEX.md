@@ -7,3 +7,4 @@
 | Operations | [Open](operations/INDEX.md) | Deployment, maintenance, and recovery. |
 | Troubleshooting | [Open](troubleshooting/INDEX.md) | Symptoms, diagnoses, and verified remedies. |
 | Decisions | [Open](decisions/INDEX.md) | Durable decisions and their consequences. |
+| Tools | [Open](tools/INDEX.md) | Reusable executable projects and their knowledge. |

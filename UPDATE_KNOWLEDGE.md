@@ -2,11 +2,12 @@
 
 ## Trigger
 
-Use this file only when the user explicitly requests knowledge organization,
-creation, consolidation, correction, or deletion. A normal task or its worklog
-does not authorize a knowledge change. Every knowledge modification is a
-substantive modification and requires a worklog, even when the rest of the task
-is limited to questions, research, inspection, or diagnosis.
+Use this file when the user explicitly requests knowledge organization,
+creation, consolidation, correction, or deletion, or when
+[Reuse-driven migration](#reuse-driven-migration) applies while using existing
+knowledge. A normal task or its worklog alone does not authorize another
+knowledge change. Every knowledge modification, including tool migration, is a
+substantive modification and requires a worklog.
 
 ## Scope and Topic Selection
 
@@ -23,6 +24,11 @@ these topic directories:
 - `operations/`: deployment, maintenance, monitoring, and recovery;
 - `troubleshooting/`: symptoms, diagnoses, evidence, and verified remedies;
 - `decisions/`: durable decisions, alternatives, and consequences.
+
+Each scope also supports `tools/` for reusable executable projects. Tools are
+not a document topic: each tool links to an owning document in one of the five
+topics above. Keep shared tools in `knowledge/common/tools/` and project-bound
+tools in `knowledge/projects/<project>/tools/`.
 
 Place a document in the narrowest fitting topic. Consolidate overlapping pages
 instead of creating duplicates.
@@ -58,6 +64,12 @@ Each scope uses:
   decisions/
     INDEX.md
     <topic>.md
+  tools/
+    INDEX.md
+    <tool-name>/
+      README.md
+      .gitignore
+      <files required by the selected engineering form>
 ```
 
 Use lowercase kebab-case document filenames. Use stable subject names rather
@@ -102,7 +114,28 @@ Every scope `INDEX.md` must use:
 | Operations | [Open](operations/INDEX.md) | Deployment, maintenance, and recovery. |
 | Troubleshooting | [Open](troubleshooting/INDEX.md) | Symptoms, diagnoses, and verified remedies. |
 | Decisions | [Open](decisions/INDEX.md) | Durable decisions and their consequences. |
+| Tools | [Open](tools/INDEX.md) | Reusable executable projects and their knowledge. |
 ```
+
+New scopes copied from the template include the Tools row and `tools/INDEX.md`.
+Existing scopes may retain their current structure until their first tool is
+added; then add both the row and index. Do not restructure unrelated scopes.
+
+### Tool Index
+
+Every `tools/INDEX.md` must use:
+
+```markdown
+# <Scope Name> Tools
+
+| Tool | Form | Knowledge | Summary |
+| --- | --- | --- | --- |
+| [<tool name>](<tool-name>/README.md) | `<python, nodejs, shell, or docker>` | [<knowledge title>](../<topic>/<document>.md) | <one-line purpose> |
+```
+
+Sort tools lexicographically by directory name. Keep the table header when no
+tools exist. Use lowercase kebab-case tool directory names. Standard engineering
+filenames such as `README.md`, `Dockerfile`, and npm manifests are allowed.
 
 ### Topic Index
 
@@ -203,6 +236,9 @@ repositories and link supporting knowledge and worklogs whenever possible.
 4. Update an existing page when it already owns the subject; create a new page
    only for a distinct durable subject.
 5. Keep conclusions source-aligned and separate verified facts from caveats.
+   Extract repeatable logic into reusable tools according to the contract below
+   when reasonable, instead of leaving substantial executable logic only in
+   Markdown code blocks.
 6. Update the topic, scope, and root indexes affected by the change.
 7. Link the required worklog for the knowledge-update task.
 8. Verify relative links, full commit hashes, immutable flags, UTC+8 timestamps,
@@ -210,3 +246,87 @@ repositories and link supporting knowledge and worklogs whenever possible.
 
 When replacing obsolete knowledge, preserve useful history through Git and link
 the replacement page from any document that must remain for context.
+
+## Reusable Tool Engineering
+
+Prefer an executable project for logic that can be reused with different
+runtime inputs. Keep it small, self-contained, and directly under the owning
+scope's `tools/<tool-name>/`. Keep the knowledge document as the durable
+explanation and operation entry point, linking to the tool and giving concrete
+run commands. The tool README must link back to that document. Reuse an existing
+project rather than creating a duplicate.
+
+Choose exactly one primary form for each new tool:
+
+### Python
+
+Include the source, `requirements.txt`, `README.md`, and `.gitignore`. List all
+third-party dependencies; keep `requirements.txt` even for a standard-library
+tool and state that no dependencies are required. Prefer a project-local venv
+for every invocation and document creation, dependency installation, and
+execution through that environment. Ignore `.venv/`, other documented virtual
+environment directories, `__pycache__/`, `*.py[cod]`, and applicable test caches.
+
+### Node.js
+
+Provide a complete npm project: `package.json`, committed `package-lock.json`,
+source files, documented npm run scripts, `README.md`, and `.gitignore`. Declare
+the supported Node.js version and all dependencies. Document `npm ci` and the
+run command, even when the tool has no third-party dependencies. Ignore
+`node_modules/`, npm debug logs, and applicable cache, coverage, and build output.
+
+### Shell
+
+Include the executable script with a shebang, `README.md`, and `.gitignore`.
+State the required shell. Comments in the script must list every special
+external command it uses and any required versions or nonportable features;
+state explicitly when none are needed. Document invocation and ignore the
+temporary files or output directories that the script can create.
+
+### Docker
+
+Include `Dockerfile`, `README.md`, `.dockerignore`, and `.gitignore`. The internal
+language and project layout are unrestricted for this form. The knowledge
+document must give concrete `docker build` and `docker run` commands, including
+required input, mounts, and networking. Exclude dependency directories, caches,
+temporary output, and secret files from both Git and the build context where
+applicable.
+
+### Common Project Contract
+
+Each tool README must cover purpose, requirements, setup and startup commands,
+inputs, outputs, operation effects, limitations, and the owning knowledge link.
+Tool READMEs follow this engineering contract rather than the knowledge-document
+heading contract. Keep all filenames, comments, and documentation in English.
+
+Every tool must have its own `.gitignore` matching its actual dependencies and
+temporary artifacts; root rules alone do not replace it. Ignore applicable
+local configuration and `.env` files, without excluding required manifests or
+lockfiles. Never persist credentials in source, documentation, logs, or runtime
+artifacts merely because those artifacts are ignored. Use runtime input and
+clean up temporary resources on success and failure. Provide validation suited
+to the operation, and record only checks actually performed.
+
+If a required runtime or command is absent on the local machine, use Docker
+instead of installing it on the host. This fallback does not change the tool's
+primary engineering form.
+
+## Reuse-Driven Migration
+
+When existing knowledge is used to perform a task, migrate its repeatable logic
+if it can reasonably become a reusable tool and has no existing engineered
+project. This narrow migration is authorized by the repository workflow without
+an additional knowledge-organization request. Explicit user scope, including a
+read-only restriction, takes precedence.
+
+1. Read the owning knowledge, indexes, source evidence, and relevant worklogs.
+2. Confirm that the procedure is not already implemented as an engineered
+   project. Leave existing projects in place; do not improve or migrate them
+   merely to satisfy this newer contract.
+3. Extract only the reusable logic, preserving its inputs, effects, checks, and
+   operational limits. Choose one engineering form above and add its project.
+4. Replace duplicated implementation blocks with tool links and usable commands.
+   Retain explanations, provenance, caveats, and useful historical evidence.
+5. Update the tool and owning knowledge indexes, validate the migrated behavior,
+   and write the required worklog. Tests and external actions must stay within
+   the user's authorized task; migration itself grants no additional operation.
