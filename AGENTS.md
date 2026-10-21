@@ -65,6 +65,8 @@ The repository root contains these fixed files:
   workflow, reference-repository usage, and delivery checks.
 - `UPDATE_KNOWLEDGE.md`: the only instructions for creating, organizing, or
   updating knowledge.
+- `LICENSE`: the MIT license for the Da'at framework; `README.md` describes its
+  scope and the treatment of downstream content.
 - `.gitignore`: excludes the complete `/ref-repos/` cache.
 - `ref-repo.sh`: materializes a shallow reference checkout and prints its
   absolute path.
