@@ -178,6 +178,10 @@ None.
 ### Supporting Worklogs
 
 None.
+
+### Related Todos
+
+None.
 ```
 
 Only `todo`, `in-progress`, and `blocked` are valid statuses:
@@ -206,10 +210,20 @@ indexes must not link back to todo documents or indexes. A todo operation does
 not authorize a knowledge update; follow `UPDATE_KNOWLEDGE.md` separately when
 the user authorizes one.
 
+Related Todos may link to other active items in this repository, across common
+and project scopes. State the relationship next to each relative link. For a
+blocking prerequisite, begin that description with `Blocks progress:` and add
+`Release condition:` with the observable condition. Summarize the blocker in
+Progress and Next action too.
+Contextual references alone do not imply blocking. Do not add self-references
+or a cycle of blocking prerequisites; report a discovered blocking cycle for
+clarification instead of silently changing objectives.
+
 Keep durable worklog references to todos as plain identifiers and full removal
-commit hashes, not links to files that will disappear. Do not create backward
-links from knowledge, or links between live todo files that removal would break.
-This contract covers repository-local relationships only.
+commit hashes, not links to files that will disappear. Knowledge must not gain
+backlinks. On resolve or abandon, update incoming active-todo references as
+specified below so that no live link points to a deleted item. This contract
+covers repository-local relationships only.
 
 ## Add a Todo
 
@@ -218,7 +232,8 @@ This contract covers repository-local relationships only.
    If found, return its locator without writing a duplicate or another worklog.
 3. Select the scope and copy the required scope or item template. Set a fresh
    identifier, `todo` status, equal Created and Updated times, the objective,
-   acceptance criteria, next action, and applicable references.
+   acceptance criteria, next action, and applicable knowledge, worklog, and todo
+   references. Validate blocking prerequisite descriptions and their graph.
 4. Replace any copied sample row, register a new project if needed, and add the
    item to the scope and root active tables in the required order.
 5. Validate and write a corresponding worklog under AGENTS.md, recording the
@@ -253,25 +268,40 @@ objective was completed or passed acceptance. Both actions remove the single
 item and follow the same two-commit sequence:
 
 1. Read the item and preserve its identifier, objective, criteria, evidence,
-   action, and user instruction for the later worklog. Check the target is
+   action, and user instruction for the later worklog. Find incoming links in
+   all real active todo documents and record the affected items. Check the target is
    committed and that unrelated changes will not enter the removal commit.
    Finish the authorized add workflow before removing an uncommitted new item.
-2. Delete only the selected item documents and their scope/root active rows.
+2. Replace incoming links to the selected items with their plain identifiers
+   and the actual action (`resolve` or `abandon`), retaining useful relationship
+   context. Reassess affected blockers: a resolved prerequisite releases a
+   dependent only when its documented release conditions are all met. Return
+   it to `todo` unless authorized work is actively continuing, in which case
+   use `in-progress`. Do not resolve or execute the dependent automatically.
+   An abandoned prerequisite does not satisfy acceptance; retain `blocked`
+   where applicable and state the need for a replacement or a user decision.
+   Update affected items' Updated, Progress, Next action, and index rows.
+3. Delete only the selected item documents and their scope/root active rows.
    Retain every project INDEX.md, directory, and root project-table entry.
    Keep empty active headers and add `No active todos.` when applicable.
-3. Validate links, complete and consistent indexes, and the precise diff.
-   Stage only the selected todo deletions and corresponding index changes.
+4. Validate links, complete and consistent indexes, and the precise diff.
+   Stage only the selected todo deletions, required incoming-reference and
+   blocker updates in other active items, and corresponding index changes.
    Do not include project implementation changes or worklogs in this commit.
-4. Commit the removal, then immediately capture the full hash with
+5. Commit the removal, then immediately capture the full hash with
    `git rev-parse HEAD`. Verify with `git show --name-status <removal-commit>`
    that this commit actually deletes each intended item. Never use a later
    worklog or merge commit as the removal hash.
-5. Only after that commit exists, pull the reporting repository as required by
+6. Only after that commit exists, pull the reporting repository as required by
    AGENTS.md, create the required worklog, and update its indexes. Include the
    fields below in Results; a batch may share a removal commit but must list
-   every identifier and its action. Cite the repository at the removal commit
-   under References / Repositories.
-6. Commit the worklog and its indexes separately, then push both commits and
+   every identifier and its action. Also record affected referencing items and
+   each old/new status and reason. Cite the repository at the removal commit
+   under References / Repositories. Add a Supporting Worklogs link to the new
+   record in each affected surviving todo so its retained identifier has a
+   durable explanation; update Updated when adding that reference.
+7. Commit the worklog, its indexes, and these surviving-todo worklog references
+   separately, then push both commits and
    verify the remote contains them. If reporting occurs in a separately
    designated repository, the removal and reporting commits live in their
    respective repositories; the same removal-before-reporting order applies.
@@ -291,7 +321,8 @@ mean the requested removal was completed; it must not misrepresent an abandoned
 or unverified objective as completed work. Do not add a new worklog status.
 
 If interrupted after removal was committed, find and verify that exact commit
-and recover the item's content from its parent for reporting. Continue with
+and recover the item's content and incoming references from its parent and
+diff for reporting. Continue with
 the missing worklog or push instead of recreating or deleting the item again.
 If removal and reporting are already complete, return the existing record
 without another mutation or log. If the target is absent and no verified
@@ -306,8 +337,12 @@ removal history exists, report the uncertainty rather than inventing success.
   created projects, indexes, and navigation remain after removals.
 - All prose links resolve, examples are excluded from real active lists, and
   empty lists retain their headers and the required empty-list sentence.
+- Active-todo links resolve, blocking prerequisites have release conditions and
+  no cycles, and removed targets have no dangling incoming links. Log all
+  dependent status changes and preserve their context with worklog references.
 - Knowledge content is unchanged by todo operations and contains no todo backlinks.
-- A removal commit contains the intended deletions and index updates only.
+- A removal commit contains only intended deletions, required incoming-reference
+  and blocker updates, and their index changes.
 - Each removal worklog names the action and exact full deletion commit, exists
   after that commit, and distinguishes completion from manual or abandoned work.
 - Required worklogs and their indexes are committed, both stages are pushed,

@@ -26,7 +26,8 @@ for the background behind this connection.
 - [todos/](todos/INDEX.md) lists every active todo in this repository, with
   common and project-specific details. New todos require an explicit user
   request; completed authorized work can resolve an existing todo automatically.
-  Todo details can reference knowledge and supporting worklogs.
+  Todo details can reference knowledge, supporting worklogs, and other active
+  todos, including prerequisites that block progress.
 - [worklogs/](worklogs/INDEX.md) records tasks that make substantive modifications
   or for which the user explicitly requests logging. Knowledge changes and
   actual todo creations, status changes, resolutions, and abandonments always

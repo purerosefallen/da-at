@@ -304,10 +304,13 @@ resolution is allowed for completed authorized work, but automatic creation and
 automatic abandonment are not. Explicit read-only or no-write instructions
 take precedence over automatic maintenance.
 
-Todo documents may cite knowledge and supporting worklogs; knowledge must not
-link back to todos.
+Todo documents may cite knowledge, supporting worklogs, and other active todos,
+including explicit blocking dependencies; knowledge must not link back to todos.
 Do not change knowledge while maintaining todos. Project scopes and their
 navigation entries are permanent, even after their last todo is removed.
+Before removing an item, find incoming todo references, preserve their history,
+and reassess affected blockers. Resolving a prerequisite does not resolve its
+dependents; abandoning one does not satisfy its dependents' release conditions.
 
 ## Reading Knowledge
 
@@ -380,6 +383,8 @@ valid statuses, unchanged project-scope navigation after removals, no examples
 in real active lists, and no knowledge-to-todo links. For resolve or abandon,
 verify that the worklog records the full commit hash that actually removed
 each listed todo and that the worklog was committed after that removal.
+Also check active todo references and blocking dependencies, including incoming
+reference updates and any logged status changes when a prerequisite is removed.
 
 Commit only intended repository-management changes. Do not include unrelated
 project changes.
