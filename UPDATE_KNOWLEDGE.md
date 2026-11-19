@@ -14,6 +14,15 @@ knowledge, and deleting knowledge always require an explicit user request;
 the exception does not authorize them. Every modification, including migration, is a
 substantive modification and requires a worklog.
 
+## Todo References
+
+Todo documents may reference specific knowledge documents with repository-local
+relative links. Knowledge documents and knowledge indexes must not link back to
+todo files or todo indexes: active todos are removed on resolve or abandon.
+Maintain pending-action records through `UPDATE_TODOS.md`, without changing
+knowledge content as part of a todo operation. The knowledge authorization
+requirements above remain unchanged.
+
 ## Scope and Topic Selection
 
 Choose exactly one scope for each knowledge document:

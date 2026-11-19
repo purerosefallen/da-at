@@ -12,7 +12,8 @@ delivery for that task:
 
 1. Enter this repository and run `git pull --no-rebase`.
 2. Determine the member and affected project names.
-3. Read relevant worklogs and knowledge before starting project work.
+3. Read `todos/INDEX.md`, then relevant todo details, worklogs, and knowledge
+   before starting project work.
 4. Perform the actual project work.
 5. Determine whether the task requires a worklog under the rules below.
 6. When a worklog is required, return to this repository and run
@@ -26,11 +27,24 @@ delivery for that task:
 Steps 6 through 8 are conditional when no worklog or other repository-management
 change is required.
 
+Resolving or abandoning a todo has a required intermediate commit: commit the
+todo removal and active-index changes before creating its worklog. Then record
+the full removal commit hash in a separate worklog commit and push both commits,
+as specified in [UPDATE_TODOS.md](UPDATE_TODOS.md#resolve-and-abandon).
+
 Write a worklog when the user explicitly requests one or when the task makes a
 substantive modification. A substantive modification changes project files,
 configuration, data, a deployed or external system, or knowledge content. Pure
 questions, research, inspection, or diagnosis without such a modification do
 not require a worklog.
+
+Every actual todo creation, status change, resolution, or abandonment requires
+a corresponding worklog, including automatic status updates during authorized
+work. Record the identifier and, for a status change, its old and new states
+and the reason. Reading todos or repeating an operation that changes nothing
+does not require a worklog. A project is not affected
+merely because a todo names it; report actual changes to that project separately
+from changes to this repository's todo records.
 
 Creating, editing, reorganizing, or deleting knowledge is always a substantive
 modification and always requires a worklog. If a task makes a substantive
@@ -59,12 +73,15 @@ single bounded edit exception.
 
 The repository root contains these fixed files:
 
-- `README.md`: repository title, purpose, content map, and links to the two
+- `README.md`: repository title, purpose, content map, and links to the three
   instruction files.
 - `AGENTS.md`: mandatory task workflow, worklog contracts, knowledge-reading
-  workflow, reference-repository usage, and delivery checks.
+  workflow, todo operation entry points, reference-repository usage, and
+  delivery checks.
 - `UPDATE_KNOWLEDGE.md`: the only instructions for creating, organizing, or
   updating knowledge.
+- `UPDATE_TODOS.md`: todo structures, templates, indexes, states, and the add,
+  change-status, resolve, and abandon procedures.
 - `LICENSE`: the MIT license for the Da'at framework; `README.md` describes its
   scope and the treatment of downstream content.
 - `.gitignore`: excludes the complete `/ref-repos/` cache.
@@ -255,6 +272,43 @@ log must link to all sibling logs under `Related Worklogs`. Use relative
 Markdown links for repository-local documents. Preserve historical logs;
 change one only to correct inaccurate content or a broken link.
 
+For todo resolution or abandonment, the worklog's Results section must record
+`Todo action: resolve` or `Todo action: abandon`, the todo identifier and
+objective, the evidence or user instruction, and
+`Todo removal commit: <full commit hash>`. Create this worklog only after the
+removal commit exists. Record identifiers and commit hashes rather than links
+to deleted todo files. See [UPDATE_TODOS.md](UPDATE_TODOS.md#resolve-and-abandon).
+
+## Working with Todos
+
+Read `todos/INDEX.md` at the start of every task to see all active todos in this
+repository. Read the applicable scope index and todo documents before acting.
+The root index is a complete active list, not just a list of project entrances.
+
+Read [UPDATE_TODOS.md](UPDATE_TODOS.md) before any of these operations:
+
+- **Add a todo:** only when the user explicitly asks to mark or record a todo.
+  Report newly discovered follow-up work without silently registering it.
+- **Change status:** use only `todo`, `in-progress`, or `blocked`. Update an
+  existing todo on explicit instruction or when its state changes during
+  clearly related authorized work; synchronize both active indexes.
+- **Resolve:** remove an existing todo after the authorized work satisfies its
+  acceptance criteria, or when the user explicitly requests manual resolution.
+  State whether completion was independently verified.
+- **Abandon:** remove an existing todo only when the user explicitly gives up
+  executing it. Record the supplied reason, or that no reason was supplied.
+  `abandon` is an action, never a todo status.
+
+A recorded todo is not authorization to execute its objective. Automatic
+resolution is allowed for completed authorized work, but automatic creation and
+automatic abandonment are not. Explicit read-only or no-write instructions
+take precedence over automatic maintenance.
+
+Todo documents may cite knowledge and supporting worklogs; knowledge must not
+link back to todos.
+Do not change knowledge while maintaining todos. Project scopes and their
+navigation entries are permanent, even after their last todo is removed.
+
 ## Reading Knowledge
 
 Knowledge has two scopes:
@@ -314,11 +368,18 @@ stderr. Cite the original URL and resolved commit, never the cache path.
 Before committing, verify that:
 
 - all new repository content is English;
-- every new file follows its contract above or in `UPDATE_KNOWLEDGE.md`;
+- every new file follows its contract above, in `UPDATE_KNOWLEDGE.md`, or in
+  `UPDATE_TODOS.md`;
 - all affected indexes contain valid relative links;
 - cross-project logs link to one another;
 - no `ref-repos/` content is tracked;
 - each worklog records the validation actually performed.
+
+For todo changes, also verify complete and synchronized root/scope indexes,
+valid statuses, unchanged project-scope navigation after removals, no examples
+in real active lists, and no knowledge-to-todo links. For resolve or abandon,
+verify that the worklog records the full commit hash that actually removed
+each listed todo and that the worklog was committed after that removal.
 
 Commit only intended repository-management changes. Do not include unrelated
 project changes.
