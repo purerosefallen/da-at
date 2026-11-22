@@ -43,10 +43,13 @@ for the background behind this connection.
 
 ## Getting Started
 
-1. Use Da'at as the starting point for your own worklog and knowledge repository.
-   Keep the framework's history if you want to merge future updates.
-2. Configure your instance's `origin` to point to its own repository and configure
-   `git user.name` before recording work.
+1. **Fork or copy this repository to your own Git hosting platform.** On GitHub,
+   fork Da'at into your personal or organization account. On another host, such
+   as your organization's internal Git server, import the repository or push a
+   copy to a new repository you control. Keep the Git history if you want to
+   merge future framework updates.
+2. Clone your fork or hosted copy and verify that `origin` points to that
+   repository. Configure `git user.name` before recording work.
 3. Read [AGENTS.md](AGENTS.md) and [the active todo list](todos/INDEX.md) before
    starting a task. Follow the knowledge-reading workflow and create worklogs
    only when the logging rules require them.
