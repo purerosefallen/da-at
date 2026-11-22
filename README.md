@@ -41,21 +41,37 @@ for the background behind this connection.
   provide complete copyable structures without representing real data.
 - [LICENSE](LICENSE) contains the framework's MIT license.
 
-## Getting Started
+## Onboarding
 
 1. **Fork or copy this repository to your own Git hosting platform.** On GitHub,
    fork Da'at into your personal or organization account. On another host, such
    as your organization's internal Git server, import the repository or push a
    copy to a new repository you control. Keep the Git history if you want to
    merge future framework updates.
-2. Clone your fork or hosted copy and verify that `origin` points to that
-   repository. Configure `git user.name` before recording work.
-3. Read [AGENTS.md](AGENTS.md) and [the active todo list](todos/INDEX.md) before
+2. **Clone your instance into a local directory**, such as
+   `/home/alex/projects/agent-logs`. Verify that the clone's `origin` points to
+   your hosted instance and configure `git user.name` before recording work.
+3. **Add the worklog rule to `~/.codex/AGENTS.md`.** Append the example below,
+   creating the file if needed. Replace the example path with the absolute
+   path to your instance's `AGENTS.md`.
+
+   ```markdown
+   ## Project Worklogs
+
+   - Whenever a task involves substantive changes to a project or I explicitly
+     request a worklog, follow the workflow in
+     `/home/alex/projects/agent-logs/AGENTS.md` and record the work in that
+     repository.
+   ```
+
+## Working in Your Instance
+
+1. Read [AGENTS.md](AGENTS.md) and [the active todo list](todos/INDEX.md) before
    starting a task. Follow the knowledge-reading workflow and create worklogs
    only when the logging rules require them.
-4. For an explicitly requested knowledge change or the permitted reuse-driven
+2. For an explicitly requested knowledge change or the permitted reuse-driven
    migration, also follow [UPDATE_KNOWLEDGE.md](UPDATE_KNOWLEDGE.md).
-5. Before adding or changing todos, follow [UPDATE_TODOS.md](UPDATE_TODOS.md).
+3. Before adding or changing todos, follow [UPDATE_TODOS.md](UPDATE_TODOS.md).
    Resolve an existing todo after verified authorized work or on an explicit
    manual-resolve request. Abandon only on an explicit user decision to give
    up execution. Commit the removal before recording its full hash in a worklog.
